@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кафе та Ресторани Звягеля</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig={
+    apiKey:"AIzaSyDrtZhY-HP9HPoTZupa5VqkxW6I7_0W9Rg",
+    authDomain:"shina-zvyagel.firebaseapp.com",
+    projectId:"shina-zvyagel",
+    storageBucket:"shina-zvyagel.firebasestorage.app",
+    messagingSenderId:"295644049393",
+    appId:"1:295644049393:web:d16468f32bbe95ec809e50"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db=firebase.firestore();
+  const auth=firebase.auth();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F5F0;--bg-card:#fff;--bg-alt:#EDEAE3;
+  --text:#1A1917;--text-muted:#7A7770;--text-hint:#B0ADA5;
+  --border:rgba(26,25,23,0.1);--border-mid:rgba(26,25,23,0.18);
+  --accent:#1A1917;--accent-text:#F5F3EE;
+  --green:#2E6E47;--green-bg:#EAF4EE;
+  --red:#A3301D;--red-bg:#FAECE8;
+  --amber:#8A5C0A;--amber-bg:#FDF3E0;
+  --orange:#C05A00;--orange-bg:#FEF0E6;
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 2px 8px rgba(0,0,0,0.06),0 0 1px rgba(0,0,0,0.08);
+}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+header{background:var(--accent);padding:0 1.25rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:8px}
+.logo{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:#F5F3EE;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.logo span{color:#FF6B35}
+.header-right{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--radius-sm);border:1.5px solid transparent;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.btn-ghost{border-color:rgba(245,243,238,0.25);color:#F5F3EE;background:transparent}
+.btn-ghost:hover{background:rgba(245,243,238,0.1)}
+.btn-white{background:#F5F3EE;color:var(--accent)}
+.btn-white:hover{background:#e8e5df}
+.btn-dark{background:var(--accent);color:#F5F3EE;border-color:var(--accent)}
+.btn-dark:hover{background:#333}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-mid)}
+.btn-outline:hover{background:var(--bg-alt)}
+.btn-orange{background:#FF6B35;color:#fff;border-color:#FF6B35}
+.btn-orange:hover{background:#e55a25}
+.btn svg{width:15px;height:15px;flex-shrink:0}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1A1917 0%,#2d2925 100%);padding:1.75rem 1.25rem 1.5rem;text-align:center}
+.hero h1{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3}
+.hero h1 span{color:#FF6B35}
+.hero p{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:1.25rem}
+.search-row{display:flex;gap:8px;max-width:500px;margin:0 auto}
+.search-row input{flex:1;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-family:'Manrope',sans-serif;font-size:13px;outline:none}
+.search-row input::placeholder{color:rgba(255,255,255,0.35)}
+.search-row input:focus{border-color:rgba(255,255,255,0.4)}
+
+/* CATS */
+.cats{background:var(--accent);padding:0 1.25rem 1rem;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(245,243,238,0.2);background:transparent;color:rgba(245,243,238,0.65);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.15s}
+.cat-btn.on{background:#FF6B35;color:#fff;border-color:#FF6B35}
+.cat-btn:hover{border-color:rgba(245,243,238,0.5);color:#F5F3EE}
+
+/* STATS */
+.stats-bar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0.6rem 1.25rem;display:flex;gap:1.25rem;font-size:12px;color:var(--text-muted);overflow-x:auto;scrollbar-width:none}
+.stats-bar b{color:var(--text)}
+
+/* GRID */
+.main{padding:1.25rem;max-width:900px;margin:0 auto}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-hint);margin-bottom:1rem}
+.cafes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:2rem}
+.cafe-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s}
+.cafe-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.cafe-thumb{height:160px;background:var(--bg-alt);position:relative;overflow:hidden}
+.cafe-thumb img{width:100%;height:100%;object-fit:cover}
+.cafe-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px}
+.cafe-badge{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(26,25,23,0.75);color:#fff;backdrop-filter:blur(4px)}
+.cafe-delivery{position:absolute;top:8px;right:8px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:#FF6B35;color:#fff}
+.cafe-body{padding:12px 14px 14px}
+.cafe-name{font-size:15px;font-weight:700;margin-bottom:4px}
+.cafe-addr{font-size:12px;color:var(--text-muted);margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.cafe-addr svg{width:11px;height:11px;flex-shrink:0}
+.stars-row{display:flex;align-items:center;gap:6px}
+.stars{display:flex;gap:2px}
+.star{font-size:14px;color:#ddd;transition:color 0.1s}
+.star.on{color:#FF6B35}
+.star.half{color:#FF6B35;opacity:0.5}
+.rating-num{font-size:13px;font-weight:700;color:var(--text)}
+.review-count{font-size:11px;color:var(--text-hint)}
+.cafe-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tag{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--bg-alt);color:var(--text-muted);font-weight:600}
+
+/* DETAIL */
+.detail-header{position:relative}
+.detail-cover{height:200px;background:var(--bg-alt);overflow:hidden}
+.detail-cover img{width:100%;height:100%;object-fit:cover}
+.detail-cover-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:64px}
+.detail-info{padding:1.25rem}
+.detail-name{font-size:20px;font-weight:700;margin-bottom:6px}
+.detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;font-size:12px;color:var(--text-muted)}
+.detail-meta span{display:flex;align-items:center;gap:4px}
+.detail-meta svg{width:13px;height:13px}
+.menu-section{margin-bottom:1.5rem}
+.menu-cat-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-hint);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.menu-items{display:flex;flex-direction:column;gap:8px}
+.menu-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-alt);border-radius:var(--radius-sm)}
+.menu-item-photo{width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--bg)}
+.menu-item-photo-placeholder{width:52px;height:52px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.menu-item-info{flex:1;min-width:0}
+.menu-item-name{font-size:13px;font-weight:600}
+.menu-item-desc{font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu-item-price{font-size:14px;font-weight:700;color:var(--text);flex-shrink:0;font-family:'Unbounded',sans-serif}
+
+/* REVIEWS */
+.review-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.review-author{font-size:13px;font-weight:700;color:var(--text)}
+.review-nick{font-size:11px;color:var(--text-hint);margin-top:1px}
+.review-date{font-size:11px;color:var(--text-hint)}
+.review-text{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:8px}
+.review-photo{height:80px;border-radius:6px;object-fit:cover;margin-bottom:8px}
+.review-reply{background:var(--bg-alt);border-radius:var(--radius-sm);padding:8px 10px;font-size:12px;color:var(--text-muted);border-left:3px solid #FF6B35;margin-top:8px}
+.review-reply-author{font-size:10px;font-weight:700;color:#FF6B35;margin-bottom:3px}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200}
+.overlay.open{display:block}
+.modal{position:fixed;left:0;right:0;bottom:0;max-height:92vh;overflow-y:auto;background:var(--bg-card);border-radius:16px 16px 0 0;z-index:201;box-shadow:0 -4px 24px rgba(0,0,0,0.25)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card);z-index:1}
+.modal-head h2{font-size:16px;font-weight:700}
+.close-btn{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg-alt);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);flex-shrink:0}
+.close-btn svg{width:14px;height:14px}
+.modal-body{padding:1.25rem}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;padding:1rem 1.25rem;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--bg-card)}
+.fg{margin-bottom:1rem}
+label.fl{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:5px}
+.finput{width:100%;padding:9px 12px;border:1.5px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;outline:none;transition:border-color 0.15s}
+.finput:focus{border-color:#FF6B35;background:#fff}
+.finput::placeholder{color:var(--text-hint)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.toggle-row{display:flex;gap:6px;flex-wrap:wrap}
+
+/* RATING INPUT */
+.rating-input{display:flex;gap:6px}
+.rating-input .star-input{font-size:28px;cursor:pointer;color:#ddd;transition:color 0.1s}
+.rating-input .star-input.on{color:#FF6B35}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(10px);background:var(--accent);color:#F5F3EE;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;z-index:9999;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.25)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer{background:var(--accent);color:rgba(245,243,238,0.4);padding:1rem 1.25rem;font-size:12px;text-align:center}
+footer a{color:rgba(245,243,238,0.4);text-decoration:none}
+
+/* POPUP TAXI */
+#popupBanner{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;align-items:center;justify-content:center;padding:1.5rem}
+
+/* MOBILE */
+@media(max-width:600px){
+  header{padding:0 1rem;height:54px}
+  .logo{font-size:12px}
+  .btn-ghost{display:none}
+  .btn-white{padding:6px 10px;font-size:11px}
+  .hero{padding:1.25rem 1rem 1rem}
+  .hero h1{font-size:18px}
+  .main{padding:1rem}
+  .cafes-grid{grid-template-columns:1fr}
+  .search-row{flex-direction:column}
+  .row2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    🍽️ <span>Кафе</span>Звягель
+  </div>
+  <div class="header-right">
+    <button class="btn btn-ghost" id="authBtn" onclick="openModal('loginModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Увійти
+    </button>
+    <button class="btn btn-orange" onclick="openModal('writeReviewModal')">
+      ✍️ Відгук
+    </button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Кафе та Ресторани<br><span>Звягеля</span></h1>
+  <p>Відгуки, меню та рейтинг закладів міста</p>
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="🔍 Пошук закладу..." oninput="filterCafes()" autocomplete="off">
+  </div>
+</div>
+
+<div class="cats" id="catsRow">
+  <button class="cat-btn on" onclick="setCat('all',this)">Всі</button>
+  <button class="cat-btn" onclick="setCat('cafe',this)">☕ Кафе</button>
+  <button class="cat-btn" onclick="setCat('restaurant',this)">🍽️ Ресторани</button>
+  <button class="cat-btn" onclick="setCat('pizza',this)">🍕 Піцерія</button>
+  <button class="cat-btn" onclick="setCat('fastfood',this)">🍔 Фастфуд</button>
+  <button class="cat-btn" onclick="setCat('bar',this)">🍺 Бар/Паб</button>
+  <button class="cat-btn" onclick="setCat('shawarma',this)">🌯 Шаурма</button>
+  <button class="cat-btn" onclick="setCat('sushi',this)">🍣 Суші</button>
+  <button class="cat-btn" onclick="setCat('bakery',this)">🥐 Пекарня</button>
+</div>
+
+<div class="stats-bar">
+  <span id="statTotal"><b>0</b> закладів</span>
+  <span>·</span><span id="statReviews"><b>0</b> відгуків</span>
+  <span>·</span><span id="statDelivery"><b>0</b> з доставкою</span>
+</div>
+
+<div class="main">
+  <div class="section-title" id="gridTitle">Всі заклади</div>
+  <div class="cafes-grid" id="cafesGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)">
+      <div style="font-size:40px;margin-bottom:12px">🍽️</div>
+      <div style="font-size:15px;font-weight:500;color:var(--text)">Завантаження...</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 cafe.zvyagel.online ·
+  <a href="mailto:shina.zvyagel@gmail.com">shina.zvyagel@gmail.com</a>
+  <span style="margin-left:1rem">
+    <button onclick="openAdminModal()" style="background:transparent;border:none;color:rgba(245,243,238,0.3);font-size:11px;cursor:pointer;font-family:'Manrope',sans-serif">🛡 Адмін</button>
+  </span>
+</footer>
+
+<div class="toast" id="toastEl"><span id="toastMsg"></span></div>
+
+<!-- POPUP NOVO TAXI -->
+<div id="popupBanner" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;align-items:center;justify-content:center;padding:1.5rem">
+  <div style="background:#111;border-radius:16px;width:100%;max-width:400px;overflow:hidden;border:2px solid #C8F135">
+    <button onclick="closePopup()" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);cursor:pointer;color:#fff;font-size:16px;z-index:1">✕</button>
+    <div style="padding:1.5rem;text-align:center;border-bottom:3px solid #C8F135">
+      <div style="font-size:11px;font-weight:800;color:#C8F135;letter-spacing:3px;margin-bottom:4px">ЗВЯГЕЛЬ</div>
+      <div style="font-size:20px;font-weight:900;color:#fff;font-family:Arial Black,sans-serif">Таксі у Звягелі</div>
+      <div style="font-size:12px;color:#888;margin-top:4px">Novo Taxi — швидко та надійно</div>
+    </div>
+    <div style="padding:1rem 1.5rem">
+      <div style="display:flex;justify-content:space-around;margin-bottom:.75rem">
+        <div style="text-align:center"><div style="font-size:18px;font-weight:900;color:#C8F135;font-family:Arial Black,sans-serif">5хв</div><div style="font-size:9px;color:#666">ПОДАЧА</div></div>
+        <div style="text-align:center"><div style="font-size:18px;font-weight:900;color:#C8F135;font-family:Arial Black,sans-serif">24/7</div><div style="font-size:9px;color:#666">ЗАВЖДИ</div></div>
+        <div style="text-align:center"><div style="font-size:18px;font-weight:900;color:#C8F135;font-family:Arial Black,sans-serif">100%</div><div style="font-size:9px;color:#666">МІСЦЕВІ</div></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="closePopup()" style="flex:1;padding:10px;border-radius:8px;border:1px solid #333;background:transparent;color:#666;cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px">Пізніше</button>
+        <button onclick="window.open('https://novotaxi.online/','_blank');closePopup()" style="flex:2;padding:10px;border-radius:8px;border:none;background:#C8F135;color:#111;font-weight:900;cursor:pointer;font-family:Arial Black,sans-serif;font-size:13px">ЗАМОВИТИ →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="loginModal" onclick="closeOverlay(event,'loginModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-head">
+      <h2 id="loginTitle">Увійти</h2>
+      <button class="close-btn" onclick="closeModal('loginModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+    </div>
+    <div id="tabLogin">
+      <div class="modal-body">
+        <div class="fg"><label class="fl">Телефон</label><input class="finput" id="loginPhone" placeholder="+380 67 123 45 67" type="tel"></div>
+        <div class="fg"><label class="fl">Пароль</label><input class="finput" id="loginPass" type="password" placeholder="мін. 6 символів"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" onclick="switchAuthTab('reg')">Реєстрація</button>
+        <button class="btn btn-dark" onclick="doLogin()">Увійти</button>
+      </div>
+    </div>
+    <div id="tabReg" style="display:none">
+      <div class="modal-body">
+        <div class="fg"><label class="fl">Нікнейм</label><input class="finput" id="regNick" placeholder="shadow_fox, pizza_queen..."></div>
+        <div class="fg"><label class="fl">Телефон</label><input class="finput" id="regPhone" placeholder="+380 67 123 45 67" type="tel"></div>
+        <div class="fg"><label class="fl">Пароль</label><input class="finput" id="regPass" type="password" placeholder="мін. 6 символів"></div>
+        <div style="font-size:11px;color:var(--text-hint);background:var(--bg);padding:8px 10px;border-radius:var(--radius-sm)">
+          💡 Нікнейм буде видний у відгуках. Придумайте щось круте!
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" onclick="switchAuthTab('login')">Вже є акаунт</button>
+        <button class="btn btn-dark" onclick="doRegister()">Зареєструватись</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAFE DETAIL MODAL -->
+<div class="overlay" id="cafeModal" onclick="closeOverlay(event,'cafeModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-head">
+      <h2 id="cafeModalTitle">Заклад</h2>
+      <button class="close-btn" onclick="closeModal('cafeModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+    </div>
+    <div id="cafeModalBody"></div>
+  </div>
+</div>
+
+<!-- WRITE REVIEW MODAL -->
+<div class="overlay" id="writeReviewModal" onclick="closeOverlay(event,'writeReviewModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-head">
+      <h2>✍️ Написати відгук</h2>
+      <button class="close-btn" onclick="closeModal('writeReviewModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label class="fl">Заклад</label>
+        <select class="finput" id="reviewCafeId"><option value="">— Оберіть заклад —</option></select>
+      </div>
+      <div class="fg">
+        <label class="fl">Оцінка</label>
+        <div class="rating-input" id="ratingInput">
+          <span class="star-input" data-v="1" onclick="setRating(1)">★</span>
+          <span class="star-input" data-v="2" onclick="setRating(2)">★</span>
+          <span class="star-input" data-v="3" onclick="setRating(3)">★</span>
+          <span class="star-input" data-v="4" onclick="setRating(4)">★</span>
+          <span class="star-input" data-v="5" onclick="setRating(5)">★</span>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Відгук</label>
+        <textarea class="finput" id="reviewText" rows="4" placeholder="Що сподобалось? Що ні? Рекомендуєте?"></textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">Фото страви (необов'язково)</label>
+        <input type="file" id="reviewPhotoInput" accept="image/*" style="display:none" onchange="handleReviewPhoto(this)">
+        <button class="btn btn-outline" onclick="document.getElementById('reviewPhotoInput').click()" style="width:100%">📷 Додати фото</button>
+        <div id="reviewPhotoPreview" style="margin-top:8px"></div>
+      </div>
+      <div id="reviewNotLogged" style="display:none;padding:10px 12px;background:var(--amber-bg);border-radius:var(--radius-sm);font-size:12px;color:var(--amber)">
+        ⚠️ Для відгуку потрібно <b onclick="closeModal('writeReviewModal');openModal('loginModal')" style="cursor:pointer;text-decoration:underline">увійти</b>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('writeReviewModal')">Скасувати</button>
+      <button class="btn btn-orange" onclick="submitReview()">Опублікувати</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="overlay" id="adminModal" onclick="closeOverlay(event,'adminModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-head" style="background:var(--accent);border-radius:16px 16px 0 0">
+      <h2 style="color:#F5F3EE;display:flex;align-items:center;gap:8px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Супер-Адмін · Кафе
+      </h2>
+      <button class="close-btn" onclick="closeModal('adminModal')" style="background:rgba(255,255,255,0.1);color:#F5F3EE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+    </div>
+    <div style="display:flex;border-bottom:1px solid var(--border);overflow-x:auto">
+      <button id="adTabCafesBtn" onclick="adSwitchTab('cafes')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid var(--accent);color:var(--text);font-family:'Manrope',sans-serif;white-space:nowrap">🏪 Заклади</button>
+      <button id="adTabReviewsBtn" onclick="adSwitchTab('reviews')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">💬 Відгуки</button>
+      <button id="adTabMenuBtn" onclick="adSwitchTab('menu')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">📋 Меню JSON</button>
+      <button id="adTabAddBtn" onclick="adSwitchTab('add')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">➕ Додати</button>
+      <button id="adTabHelpBtn" onclick="adSwitchTab('help')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">📖 Мануал</button>
+    </div>
+
+    <!-- CAFES TAB -->
+    <div id="adTabCafes" style="padding:1rem;max-height:60vh;overflow-y:auto"><div id="adCafesList"></div></div>
+
+    <!-- REVIEWS TAB -->
+    <div id="adTabReviews" style="display:none;padding:1rem;max-height:60vh;overflow-y:auto"><div id="adReviewsList"></div></div>
+
+    <!-- MENU JSON TAB -->
+    <div id="adTabMenu" style="display:none;padding:1rem;max-height:60vh;overflow-y:auto">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:1rem;background:var(--amber-bg);padding:10px 12px;border-radius:var(--radius-sm)">
+        🤖 Схема роботи:<br>
+        1. Отримуєш фото меню на пошту<br>
+        2. Завантажуєш фото в Claude (цей чат)<br>
+        3. Claude розпізнає і дає JSON<br>
+        4. Вставляєш JSON сюди і натискаєш "Імпорт"
+      </div>
+      <div class="fg">
+        <label class="fl">Оберіть заклад</label>
+        <select class="finput" id="menuImportCafeId"><option value="">— Оберіть заклад —</option></select>
+      </div>
+      <div class="fg">
+        <label class="fl">Вставте JSON від Claude</label>
+        <textarea class="finput" id="menuJsonInput" rows="10" placeholder='[
+  {"cat":"Супи","name":"Борщ","price":65,"desc":"З пампушкою"},
+  {"cat":"Основні","name":"Котлета по-київськи","price":120,"desc":"З картопляним пюре"},
+  {"cat":"Напої","name":"Компот","price":25,"desc":""}
+]'></textarea>
+      </div>
+      <button onclick="importMenuJson()" style="width:100%;padding:12px;border-radius:var(--radius-sm);border:none;background:#FF6B35;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif">
+        📥 Імпортувати меню
+      </button>
+    </div>
+
+    <!-- ADD CAFE TAB -->
+    <div id="adTabAdd" style="display:none;padding:1rem;max-height:60vh;overflow-y:auto">
+      <div class="fg"><label class="fl">Назва закладу</label><input class="finput" id="newCafeName" placeholder="Кафе 'Зустріч'"></div>
+      <div class="fg">
+        <label class="fl">Категорія</label>
+        <select class="finput" id="newCafeCat">
+          <option value="cafe">☕ Кафе</option>
+          <option value="restaurant">🍽️ Ресторан</option>
+          <option value="pizza">🍕 Піцерія</option>
+          <option value="fastfood">🍔 Фастфуд</option>
+          <option value="bar">🍺 Бар/Паб</option>
+          <option value="shawarma">🌯 Шаурма</option>
+          <option value="sushi">🍣 Суші</option>
+          <option value="bakery">🥐 Пекарня</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Адреса</label><input class="finput" id="newCafeAddr" placeholder="вул. Шевченка, 12"></div>
+      <div class="fg"><label class="fl">Телефон</label><input class="finput" id="newCafePhone" placeholder="+380 67 123 45 67" type="tel"></div>
+      <div class="row2">
+        <div class="fg"><label class="fl">Години роботи</label><input class="finput" id="newCafeHours" placeholder="9:00 — 22:00"></div>
+        <div class="fg"><label class="fl">Середній чек (грн)</label><input class="finput" id="newCafeCheck" type="number" placeholder="200"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Доставка</label>
+        <div class="toggle-row">
+          <button class="btn btn-outline" id="delivNoBtn" onclick="setDelivery(false)">❌ Немає</button>
+          <button class="btn btn-dark" id="delivYesBtn" onclick="setDelivery(true)">✅ Є доставка</button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Опис</label><textarea class="finput" id="newCafeDesc" rows="3" placeholder="Затишне місце в центрі міста..."></textarea></div>
+      <div class="fg">
+        <label class="fl">Фото закладу</label>
+        <input type="file" id="newCafePhoto" accept="image/*" style="display:none" onchange="handleCafePhoto(this)">
+        <button class="btn btn-outline" onclick="document.getElementById('newCafePhoto').click()" style="width:100%">📷 Завантажити фото</button>
+        <div id="newCafePhotoPreview" style="margin-top:8px"></div>
+      </div>
+      <button onclick="addCafe()" style="width:100%;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#F5F3EE;font-size:14px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;margin-top:4px">
+        ➕ Додати заклад
+      </button>
+    </div>
+
+    <!-- HELP TAB -->
+    <div id="adTabHelp" style="display:none;padding:1rem;max-height:60vh;overflow-y:auto;font-size:13px;line-height:1.7;color:var(--text-muted)">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:1rem">📖 Мануал супер-адміна</div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px">🏪 Заклади</div>
+        <ul style="padding-left:1.1rem;display:flex;flex-direction:column;gap:3px;font-size:12px">
+          <li>Список всіх закладів з рейтингом і кількістю відгуків</li>
+          <li><b>Видалити</b> — прибирає заклад повністю зі всіма відгуками</li>
+          <li><b>Редагувати</b> — змінити назву, адресу, години, фото</li>
+        </ul>
+      </div>
+
+      <div style="background:#FFF5F0;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:#FF6B35;margin-bottom:6px">🤖 Імпорт меню через Claude</div>
+        <ol style="padding-left:1.1rem;display:flex;flex-direction:column;gap:4px;color:#C05A00;font-size:12px">
+          <li>Власник надсилає фото меню на твою пошту</li>
+          <li>Завантажуєш фото в цей чат (claude.ai)</li>
+          <li>Пишеш: "Розпізнай меню і дай JSON"</li>
+          <li>Claude дає JSON зі стравами і цінами</li>
+          <li>Копіюєш JSON → Адмін → 📋 Меню JSON</li>
+          <li>Обираєш заклад → вставляєш → "Імпортувати"</li>
+          <li>Меню з'являється на сайті автоматично</li>
+        </ol>
+        <div style="margin-top:8px;padding:6px 10px;background:rgba(255,107,53,0.1);border-radius:6px;font-size:11px;color:#C05A00">
+          💡 Формат JSON: масив об'єктів з полями: cat, name, price, desc
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px">💬 Відгуки</div>
+        <ul style="padding-left:1.1rem;display:flex;flex-direction:column;gap:3px;font-size:12px">
+          <li>Всі відгуки по всіх закладах</li>
+          <li><b>Видалити</b> — прибирає відгук що порушує правила</li>
+          <li>Антимат спрацьовує автоматично при публікації</li>
+        </ul>
+      </div>
+
+      <div style="background:var(--amber-bg);border-radius:var(--radius-sm);padding:12px 14px">
+        <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px">🔐 Доступ</div>
+        <ul style="padding-left:1.1rem;font-size:12px;color:var(--amber);display:flex;flex-direction:column;gap:3px">
+          <li>Кнопка "🛡 Адмін" в футері</li>
+          <li>Пароль змінюється в коді (ADMIN_PASS_CAFE)</li>
+          <li>Власники закладів — окрема адмінка по телефону</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OWNER ADMIN MODAL -->
+<div class="overlay" id="ownerModal" onclick="closeOverlay(event,'ownerModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-head" style="background:#FF6B35;border-radius:16px 16px 0 0">
+      <h2 style="color:#fff">🏪 Адмін закладу</h2>
+      <button class="close-btn" onclick="closeModal('ownerModal')" style="background:rgba(255,255,255,0.2);color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+    </div>
+    <div style="display:flex;border-bottom:1px solid var(--border);overflow-x:auto">
+      <button id="owTabInfoBtn" onclick="owSwitchTab('info')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid #FF6B35;color:var(--text);font-family:'Manrope',sans-serif;white-space:nowrap">📝 Інфо</button>
+      <button id="owTabMenuBtn" onclick="owSwitchTab('menu')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">🍴 Меню</button>
+      <button id="owTabReviewsBtn" onclick="owSwitchTab('reviews')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">💬 Відгуки</button>
+    </div>
+    <div id="owTabInfo" style="padding:1rem;max-height:60vh;overflow-y:auto"><div id="owInfoBody"></div></div>
+    <div id="owTabMenu" style="display:none;padding:1rem;max-height:60vh;overflow-y:auto"><div id="owMenuBody"></div></div>
+    <div id="owTabReviews" style="display:none;padding:1rem;max-height:60vh;overflow-y:auto"><div id="owReviewsBody"></div></div>
+  </div>
+</div>
+
+<script>
+// ═══ КОНСТАНТИ ═══
+const CAT_LABELS={cafe:'Кафе',restaurant:'Ресторан',pizza:'Піцерія',fastfood:'Фастфуд',bar:'Бар/Паб',shawarma:'Шаурма',sushi:'Суші',bakery:'Пекарня'};
+const CAT_EMOJI={cafe:'☕',restaurant:'🍽️',pizza:'🍕',fastfood:'🍔',bar:'🍺',shawarma:'🌯',sushi:'🍣',bakery:'🥐'};
+const ADMIN_PASS_CAFE='admin123456';
+
+const MAT_WORDS=['блять','бля','сука','падла','хуй','піздець','пізда','єбать','їбать','мудак','мудило','дебіл','ідіот','курва','шльондра','bastard','fuck','shit','damn','ass'];
+
+function checkMat(text){
+  const lower=text.toLowerCase();
+  return MAT_WORDS.some(w=>lower.includes(w));
+}
+
+// ═══ СТАН ═══
+let DB=[];
+let currentCat='all';
+let currentUser=null;
+let reviewRating=0;
+let reviewPhotoData='';
+let newCafePhotoData='';
+let hasDelivery=true;
+
+// ═══ AUTH ═══
+auth.onAuthStateChanged(async fbUser=>{
+  if(fbUser){
+    const snap=await db.collection('cafe_users').doc(fbUser.uid).get();
+    if(snap.exists)currentUser={uid:fbUser.uid,...snap.data()};
+    else currentUser={uid:fbUser.uid,nick:'Користувач',phone:''};
+    updateAuthBtn();
+  }else{currentUser=null;updateAuthBtn();}
+});
+
+function updateAuthBtn(){
+  const btn=document.getElementById('authBtn');
+  if(!btn)return;
+  if(currentUser){
+    btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> @${currentUser.nick}`;
+    btn.onclick=()=>{
+      if(confirm('Вийти?')){auth.signOut();toast('Вийшли');}
+    };
+  }else{
+    btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Увійти`;
+    btn.onclick=()=>openModal('loginModal');
+  }
+}
+
+function switchAuthTab(tab){
+  document.getElementById('tabLogin').style.display=tab==='login'?'block':'none';
+  document.getElementById('tabReg').style.display=tab==='reg'?'block':'none';
+  document.getElementById('loginTitle').textContent=tab==='login'?'Увійти':'Реєстрація';
+}
+
+async function doLogin(){
+  const phone=document.getElementById('loginPhone').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(!phone){toast('Введіть телефон');return;}
+  const fakeEmail=phone.replace(/\D/g,'')+`@cafe.zvyagel`;
+  try{
+    await auth.signInWithEmailAndPassword(fakeEmail,pass);
+    closeModal('loginModal');toast('Ласкаво просимо!');
+  }catch(e){toast('Невірний телефон або пароль');}
+}
+
+async function doRegister(){
+  const nick=document.getElementById('regNick').value.trim();
+  const phone=document.getElementById('regPhone').value.trim();
+  const pass=document.getElementById('regPass').value;
+  if(!nick){toast('Введіть нікнейм');return;}
+  if(nick.length<3){toast('Нікнейм мінімум 3 символи');return;}
+  if(!phone||phone.length<10){toast('Введіть правильний телефон');return;}
+  if(!pass||pass.length<6){toast('Пароль мінімум 6 символів');return;}
+  const fakeEmail=phone.replace(/\D/g,'')+`@cafe.zvyagel`;
+  try{
+    const cred=await auth.createUserWithEmailAndPassword(fakeEmail,pass);
+    await db.collection('cafe_users').doc(cred.user.uid).set({nick,phone,createdAt:Date.now()});
+    closeModal('loginModal');
+    toast('Ласкаво просимо, @'+nick+'!');
+  }catch(e){
+    if(e.code==='auth/email-already-in-use')toast('Цей телефон вже зареєстровано');
+    else toast('Помилка: '+e.message);
+  }
+}
+
+// ═══ ЗАВАНТАЖЕННЯ ═══
+async function loadCafes(){
+  try{
+    const snap=await db.collection('cafe_listings').orderBy('rating','desc').get();
+    DB=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updateStats();
+    filterCafes();
+    populateCafeSelects();
+  }catch(e){
+    document.getElementById('cafesGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)"><div style="font-size:40px;margin-bottom:12px">😔</div><div>Помилка завантаження</div></div>`;
+  }
+}
+
+function updateStats(){
+  const total=DB.length;
+  const withDelivery=DB.filter(c=>c.delivery).length;
+  const snap_reviews=DB.reduce((a,c)=>a+(c.reviewCount||0),0);
+  document.getElementById('statTotal').innerHTML=`<b>${total}</b> закладів`;
+  document.getElementById('statReviews').innerHTML=`<b>${snap_reviews}</b> відгуків`;
+  document.getElementById('statDelivery').innerHTML=`<b>${withDelivery}</b> з доставкою`;
+}
+
+function populateCafeSelects(){
+  const opts=DB.map(c=>`<option value="${c.id}">${CAT_EMOJI[c.cat]||'🍽️'} ${c.name}</option>`).join('');
+  ['reviewCafeId','menuImportCafeId'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.innerHTML='<option value="">— Оберіть заклад —</option>'+opts;
+  });
+}
+
+// ═══ ФІЛЬТРИ ═══
+function setCat(cat,btn){
+  currentCat=cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  filterCafes();
+}
+
+function filterCafes(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase().trim();
+  let data=DB.filter(c=>{
+    if(currentCat!=='all'&&c.cat!==currentCat)return false;
+    if(q&&!((c.name||'').toLowerCase().includes(q)||(c.addr||'').toLowerCase().includes(q)))return false;
+    return true;
+  });
+  data.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  renderCafes(data);
+  document.getElementById('gridTitle').textContent=currentCat==='all'?'Всі заклади':(CAT_LABELS[currentCat]||'Заклади');
+}
+
+function starsHtml(rating,size=14){
+  let html='<div class="stars">';
+  for(let i=1;i<=5;i++){
+    if(rating>=i)html+=`<span class="star on" style="font-size:${size}px">★</span>`;
+    else if(rating>=i-0.5)html+=`<span class="star half" style="font-size:${size}px">★</span>`;
+    else html+=`<span class="star" style="font-size:${size}px">★</span>`;
+  }
+  html+='</div>';
+  return html;
+}
+
+function renderCafes(data){
+  const g=document.getElementById('cafesGrid');
+  if(!data.length){
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:15px;font-weight:500;color:var(--text)">Нічого не знайдено</div></div>`;
+    return;
+  }
+  g.innerHTML=data.map(c=>`
+    <div class="cafe-card" onclick="openCafe('${c.id}')">
+      <div class="cafe-thumb">
+        ${c.photo?`<img src="${c.photo}" alt="${c.name}" loading="lazy">`:`<div class="cafe-thumb-placeholder">${CAT_EMOJI[c.cat]||'🍽️'}</div>`}
+        <span class="cafe-badge">${CAT_EMOJI[c.cat]||'🍽️'} ${CAT_LABELS[c.cat]||c.cat}</span>
+        ${c.delivery?'<span class="cafe-delivery">🛵 Доставка</span>':''}
+      </div>
+      <div class="cafe-body">
+        <div class="cafe-name">${c.name}</div>
+        <div class="cafe-addr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${c.addr||'Звягель'}</div>
+        <div class="stars-row">
+          ${starsHtml(c.rating||0)}
+          <span class="rating-num">${c.rating?c.rating.toFixed(1):'—'}</span>
+          <span class="review-count">(${c.reviewCount||0} відгуків)</span>
+        </div>
+        <div class="cafe-tags">
+          ${c.hours?`<span class="tag">🕐 ${c.hours}</span>`:''}
+          ${c.avgCheck?`<span class="tag">💳 ~${c.avgCheck} грн</span>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══ ДЕТАЛІ ЗАКЛАДУ ═══
+async function openCafe(id){
+  const cafe=DB.find(c=>c.id===id);
+  if(!cafe)return;
+  document.getElementById('cafeModalTitle').textContent=cafe.name;
+
+  // Завантажити відгуки
+  const revSnap=await db.collection('cafe_reviews').where('cafeId','==',id).orderBy('date','desc').limit(50).get();
+  const reviews=revSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+  // Завантажити меню
+  const menuSnap=await db.collection('cafe_menu').where('cafeId','==',id).get();
+  const menuItems=menuSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+  // Групуємо меню по категоріях
+  const menuByCat={};
+  menuItems.forEach(item=>{
+    if(!menuByCat[item.cat])menuByCat[item.cat]=[];
+    menuByCat[item.cat].push(item);
+  });
+
+  const menuHtml=Object.keys(menuByCat).length?`
+    <div style="padding:0 1.25rem 1rem">
+      <div class="section-title" style="margin-bottom:12px">🍴 Меню</div>
+      ${Object.entries(menuByCat).map(([cat,items])=>`
+        <div class="menu-section">
+          <div class="menu-cat-title">${cat}</div>
+          <div class="menu-items">
+            ${items.map(item=>`
+              <div class="menu-item">
+                ${item.photo?`<img src="${item.photo}" class="menu-item-photo">`:`<div class="menu-item-photo-placeholder">${getMenuEmoji(cat)}</div>`}
+                <div class="menu-item-info">
+                  <div class="menu-item-name">${item.name}</div>
+                  ${item.desc?`<div class="menu-item-desc">${item.desc}</div>`:''}
+                </div>
+                <div class="menu-item-price">${item.price} ₴</div>
+              </div>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`:'';
+
+  const reviewsHtml=`
+    <div style="padding:0 1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="section-title" style="margin-bottom:0">💬 Відгуки (${reviews.length})</div>
+        <button class="btn btn-orange" style="font-size:11px;padding:6px 12px" onclick="closeModal('cafeModal');document.getElementById('reviewCafeId').value='${id}';openModal('writeReviewModal')">✍️ Написати</button>
+      </div>
+      ${reviews.length?reviews.map(r=>`
+        <div class="review-card">
+          <div class="review-header">
+            <div>
+              <div class="review-author">@${r.nick||'Анонім'}</div>
+              <div>${starsHtml(r.rating,12)}</div>
+            </div>
+            <div class="review-date">${timeAgo(r.date)}</div>
+          </div>
+          ${r.photo?`<img src="${r.photo}" class="review-photo" style="width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-bottom:8px">`:''}
+          <div class="review-text">${r.text}</div>
+          ${r.reply?`<div class="review-reply"><div class="review-reply-author">🏪 Відповідь закладу</div>${r.reply}</div>`:''}
+          ${currentUser&&currentUser.uid===r.uid?`<button onclick="deleteMyReview('${r.id}','${id}')" style="font-size:11px;color:var(--red);background:transparent;border:none;cursor:pointer;padding:0;font-family:'Manrope',sans-serif">Видалити</button>`:''}
+        </div>`).join(''):`<div style="text-align:center;padding:2rem;color:var(--text-muted)">Будьте першим хто залишить відгук! 🌟</div>`}
+    </div>`;
+
+  document.getElementById('cafeModalBody').innerHTML=`
+    <div class="detail-cover">
+      ${cafe.photo?`<img src="${cafe.photo}" alt="${cafe.name}">`:`<div class="detail-cover-placeholder">${CAT_EMOJI[cafe.cat]||'🍽️'}</div>`}
+    </div>
+    <div class="detail-info">
+      <div class="detail-name">${cafe.name}</div>
+      <div class="stars-row" style="margin-bottom:10px">
+        ${starsHtml(cafe.rating||0,16)}
+        <span class="rating-num" style="font-size:16px">${cafe.rating?cafe.rating.toFixed(1):'—'}</span>
+        <span class="review-count">(${cafe.reviewCount||0} відгуків)</span>
+      </div>
+      <div class="detail-meta">
+        ${cafe.addr?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${cafe.addr}</span>`:''}
+        ${cafe.phone?`<span>📞 ${cafe.phone}</span>`:''}
+        ${cafe.hours?`<span>🕐 ${cafe.hours}</span>`:''}
+        ${cafe.avgCheck?`<span>💳 ~${cafe.avgCheck} грн</span>`:''}
+        ${cafe.delivery?`<span style="color:#FF6B35;font-weight:700">🛵 Є доставка</span>`:''}
+      </div>
+      ${cafe.desc?`<div style="font-size:13px;color:var(--text-muted);background:var(--bg);padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:1rem;line-height:1.6">${cafe.desc}</div>`:''}
+    </div>
+    ${menuHtml}
+    ${reviewsHtml}`;
+
+  openModal('cafeModal');
+}
+
+function getMenuEmoji(cat){
+  const map={'Супи':'🥣','Салати':'🥗','Основні':'🍽️','М\'ясо':'🥩','Піца':'🍕','Суші':'🍣','Напої':'🥤','Десерти':'🍰','Снідані':'🍳','Закуски':'🫙','Соуси':'🧂'};
+  return map[cat]||'🍴';
+}
+
+async function deleteMyReview(reviewId,cafeId){
+  if(!confirm('Видалити свій відгук?'))return;
+  try{
+    await db.collection('cafe_reviews').doc(reviewId).delete();
+    await recalcRating(cafeId);
+    await openCafe(cafeId);
+    toast('Відгук видалено');
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+// ═══ ВІДГУК ═══
+function setRating(n){
+  reviewRating=n;
+  document.querySelectorAll('.star-input').forEach(s=>{
+    s.classList.toggle('on',parseInt(s.dataset.v)<=n);
+  });
+}
+
+async function handleReviewPhoto(input){
+  const file=input.files[0];
+  if(!file)return;
+  const compressed=await compressPhoto(file,600,0.7);
+  reviewPhotoData=compressed;
+  document.getElementById('reviewPhotoPreview').innerHTML=`<img src="${compressed}" style="height:80px;border-radius:8px;object-fit:cover">`;
+}
+
+async function submitReview(){
+  if(!currentUser){
+    document.getElementById('reviewNotLogged').style.display='block';
+    return;
+  }
+  const cafeId=document.getElementById('reviewCafeId').value;
+  const text=document.getElementById('reviewText').value.trim();
+  if(!cafeId){toast('Оберіть заклад');return;}
+  if(!reviewRating){toast('Поставте оцінку');return;}
+  if(!text||text.length<10){toast('Напишіть більше — мінімум 10 символів');return;}
+  if(checkMat(text)){toast('❌ Будь ласка, без нецензурних слів');return;}
+
+  try{
+    await db.collection('cafe_reviews').add({
+      cafeId,text,rating:reviewRating,
+      photo:reviewPhotoData||'',
+      nick:currentUser.nick,uid:currentUser.uid,
+      date:Date.now()
+    });
+    await recalcRating(cafeId);
+    closeModal('writeReviewModal');
+    document.getElementById('reviewText').value='';
+    document.getElementById('reviewCafeId').value='';
+    document.getElementById('reviewPhotoPreview').innerHTML='';
+    reviewPhotoData='';reviewRating=0;
+    document.querySelectorAll('.star-input').forEach(s=>s.classList.remove('on'));
+    await loadCafes();
+    toast('Дякуємо за відгук! 🌟');
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+async function recalcRating(cafeId){
+  const snap=await db.collection('cafe_reviews').where('cafeId','==',cafeId).get();
+  const reviews=snap.docs.map(d=>d.data());
+  const count=reviews.length;
+  const avg=count?reviews.reduce((a,r)=>a+r.rating,0)/count:0;
+  await db.collection('cafe_listings').doc(cafeId).update({
+    rating:Math.round(avg*10)/10,
+    reviewCount:count
+  });
+}
+
+// ═══ ФОТО ═══
+function compressPhoto(file,maxW=800,quality=0.75){
+  return new Promise(res=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let w=img.width,h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        res(canvas.toDataURL('image/jpeg',quality));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleCafePhoto(input){
+  const file=input.files[0];
+  if(!file)return;
+  newCafePhotoData=await compressPhoto(file,900,0.78);
+  document.getElementById('newCafePhotoPreview').innerHTML=`<img src="${newCafePhotoData}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-top:4px">`;
+}
+
+function setDelivery(val){
+  hasDelivery=val;
+  document.getElementById('delivNoBtn').className='btn '+(val?'btn-outline':'btn-dark');
+  document.getElementById('delivYesBtn').className='btn '+(val?'btn-dark':'btn-outline');
+}
+
+// ═══ АДМІН ═══
+function openAdminModal(){
+  const p=prompt('Пароль:');
+  if(p===ADMIN_PASS_CAFE){openModal('adminModal');adSwitchTab('cafes');}
+  else if(p!==null)toast('Невірний пароль');
+}
+
+function adSwitchTab(tab){
+  ['cafes','reviews','menu','add','help'].forEach(t=>{
+    const el=document.getElementById('adTab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el)el.style.display=t===tab?'block':'none';
+    const btn=document.getElementById('adTab'+t.charAt(0).toUpperCase()+t.slice(1)+'Btn');
+    if(btn){btn.style.borderBottomColor=t===tab?'var(--accent)':'transparent';btn.style.color=t===tab?'var(--text)':'var(--text-muted)';}
+  });
+  if(tab==='cafes')adRenderCafes();
+  if(tab==='reviews')adRenderReviews();
+  if(tab==='menu')populateCafeSelects();
+}
+
+async function adRenderCafes(){
+  const el=document.getElementById('adCafesList');
+  el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-muted);font-size:13px">Завантаження...</div>';
+  try{
+    const snap=await db.collection('cafe_listings').orderBy('name').get();
+    const cafes=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!cafes.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text-muted)">Закладів немає — додайте перший!</div>';return;}
+    el.innerHTML=cafes.map(c=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;background:var(--bg-card)">
+        ${c.photo?`<img src="${c.photo}" style="width:48px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0">`:`<div style="width:48px;height:40px;background:var(--bg-alt);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${CAT_EMOJI[c.cat]||'🍽️'}</div>`}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">${c.name}</div>
+          <div style="font-size:11px;color:var(--text-muted)">${CAT_LABELS[c.cat]||''} · ⭐${c.rating||'—'} · ${c.reviewCount||0} відгуків</div>
+        </div>
+        <button onclick="adDeleteCafe('${c.id}')" style="padding:5px 10px;border-radius:var(--radius-sm);border:1px solid var(--red);background:var(--red-bg);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;flex-shrink:0">Видалити</button>
+      </div>`).join('');
+  }catch(e){el.innerHTML='<div style="color:var(--red);padding:1rem">Помилка: '+e.message+'</div>';}
+}
+
+async function adDeleteCafe(id){
+  if(!confirm('Видалити заклад разом з усіма відгуками?'))return;
+  try{
+    await db.collection('cafe_listings').doc(id).delete();
+    const revSnap=await db.collection('cafe_reviews').where('cafeId','==',id).get();
+    await Promise.all(revSnap.docs.map(d=>d.ref.delete()));
+    const menuSnap=await db.collection('cafe_menu').where('cafeId','==',id).get();
+    await Promise.all(menuSnap.docs.map(d=>d.ref.delete()));
+    await loadCafes();adRenderCafes();
+    toast('Заклад видалено');
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+async function adRenderReviews(){
+  const el=document.getElementById('adReviewsList');
+  el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-muted);font-size:13px">Завантаження...</div>';
+  try{
+    const snap=await db.collection('cafe_reviews').orderBy('date','desc').limit(100).get();
+    const reviews=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!reviews.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text-muted)">Відгуків немає</div>';return;}
+    const cafeMap={};
+    DB.forEach(c=>{cafeMap[c.id]=c.name;});
+    el.innerHTML=reviews.map(r=>`
+      <div style="padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;background:var(--bg-card)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:12px;font-weight:700">@${r.nick||'?'} · ${'★'.repeat(r.rating||0)}</div>
+          <button onclick="adDeleteReview('${r.id}','${r.cafeId}')" style="padding:4px 8px;border-radius:var(--radius-sm);border:1px solid var(--red);background:var(--red-bg);color:var(--red);font-size:10px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif">Видалити</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-hint);margin-bottom:4px">${cafeMap[r.cafeId]||r.cafeId} · ${timeAgo(r.date)}</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5">${r.text}</div>
+      </div>`).join('');
+  }catch(e){el.innerHTML='<div style="color:var(--red);padding:1rem">Помилка: '+e.message+'</div>';}
+}
+
+async function adDeleteReview(reviewId,cafeId){
+  if(!confirm('Видалити відгук?'))return;
+  try{
+    await db.collection('cafe_reviews').doc(reviewId).delete();
+    await recalcRating(cafeId);
+    await loadCafes();adRenderReviews();
+    toast('Відгук видалено');
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+async function addCafe(){
+  const name=document.getElementById('newCafeName').value.trim();
+  const cat=document.getElementById('newCafeCat').value;
+  const addr=document.getElementById('newCafeAddr').value.trim();
+  const phone=document.getElementById('newCafePhone').value.trim();
+  const hours=document.getElementById('newCafeHours').value.trim();
+  const avgCheck=parseInt(document.getElementById('newCafeCheck').value)||0;
+  const desc=document.getElementById('newCafeDesc').value.trim();
+  if(!name){toast('Введіть назву закладу');return;}
+  if(!addr){toast('Введіть адресу');return;}
+  try{
+    await db.collection('cafe_listings').add({
+      name,cat,addr,phone,hours,avgCheck,desc,
+      photo:newCafePhotoData||'',
+      delivery:hasDelivery,
+      rating:0,reviewCount:0,
+      createdAt:Date.now()
+    });
+    document.getElementById('newCafeName').value='';
+    document.getElementById('newCafeAddr').value='';
+    document.getElementById('newCafePhone').value='';
+    document.getElementById('newCafeHours').value='';
+    document.getElementById('newCafeCheck').value='';
+    document.getElementById('newCafeDesc').value='';
+    document.getElementById('newCafePhotoPreview').innerHTML='';
+    newCafePhotoData='';
+    await loadCafes();
+    toast('✅ Заклад додано!');
+    adSwitchTab('cafes');
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+async function importMenuJson(){
+  const cafeId=document.getElementById('menuImportCafeId').value;
+  const jsonText=document.getElementById('menuJsonInput').value.trim();
+  if(!cafeId){toast('Оберіть заклад');return;}
+  if(!jsonText){toast('Вставте JSON від Claude');return;}
+  let items;
+  try{
+    const clean=jsonText.replace(/```json|```/g,'').trim();
+    items=JSON.parse(clean);
+  }catch(e){toast('❌ Невірний JSON формат');return;}
+  if(!Array.isArray(items)||!items.length){toast('JSON має бути масивом страв');return;}
+
+  try{
+    // Видаляємо старе меню
+    const oldSnap=await db.collection('cafe_menu').where('cafeId','==',cafeId).get();
+    await Promise.all(oldSnap.docs.map(d=>d.ref.delete()));
+    // Додаємо нове
+    await Promise.all(items.map(item=>db.collection('cafe_menu').add({
+      cafeId,
+      cat:item.cat||'Страви',
+      name:item.name||'',
+      price:parseInt(item.price)||0,
+      desc:item.desc||'',
+      photo:item.photo||'',
+      createdAt:Date.now()
+    })));
+    document.getElementById('menuJsonInput').value='';
+    toast(`✅ Імпортовано ${items.length} страв!`);
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+// ═══ ВЛАСНИК ЗАКЛАДУ ═══
+function owSwitchTab(tab){
+  ['info','menu','reviews'].forEach(t=>{
+    const el=document.getElementById('owTab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el)el.style.display=t===tab?'block':'none';
+    const btn=document.getElementById('owTab'+t.charAt(0).toUpperCase()+t.slice(1)+'Btn');
+    if(btn){btn.style.borderBottomColor=t===tab?'#FF6B35':'transparent';btn.style.color=t===tab?'var(--text)':'var(--text-muted)';}
+  });
+}
+
+// ═══ УТИЛІТИ ═══
+function timeAgo(ts){
+  const d=Math.floor((Date.now()-ts)/86400000);
+  if(d===0)return'Сьогодні';if(d===1)return'Вчора';
+  if(d<7)return d+'д. тому';return Math.floor(d/7)+'тиж. тому';
+}
+
+function openModal(id){
+  const el=document.getElementById(id);
+  if(el){el.classList.add('open');el.querySelector('.modal').onclick=e=>e.stopPropagation();}
+  if(id==='writeReviewModal'){
+    document.getElementById('reviewNotLogged').style.display=currentUser?'none':'block';
+  }
+}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+function closeOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+
+let _tTimer;
+function toast(msg){
+  const el=document.getElementById('toastEl');
+  document.getElementById('toastMsg').textContent=msg;
+  el.classList.add('show');
+  clearTimeout(_tTimer);
+  _tTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+let _popupTimer;
+function closePopup(){
+  document.getElementById('popupBanner').style.display='none';
+  clearTimeout(_popupTimer);
+  _popupTimer=setTimeout(()=>document.getElementById('popupBanner').style.display='flex',5*60*1000);
+}
+setTimeout(()=>document.getElementById('popupBanner').style.display='flex',3000);
+
+// ═══ ІНІЦІАЛІЗАЦІЯ ═══
+loadCafes();
+updateAuthBtn();
+</script>
+</body>
+</html>
