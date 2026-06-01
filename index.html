@@ -191,6 +191,9 @@ footer a{color:rgba(245,243,238,0.4);text-decoration:none}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       Увійти
     </button>
+    <button class="btn btn-outline" onclick="openModal('registerCafeModal')" style="font-size:11px;padding:6px 10px;color:#F5F3EE;border-color:rgba(245,243,238,0.25)">
+      🏪 Мій заклад
+    </button>
     <button class="btn btn-orange" onclick="openModal('writeReviewModal')">
       ✍️ Відгук
     </button>
@@ -262,6 +265,78 @@ footer a{color:rgba(245,243,238,0.4);text-decoration:none}
         <button onclick="closePopup()" style="flex:1;padding:10px;border-radius:8px;border:1px solid #333;background:transparent;color:#666;cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px">Пізніше</button>
         <button onclick="window.open('https://novotaxi.online/','_blank');closePopup()" style="flex:2;padding:10px;border-radius:8px;border:none;background:#C8F135;color:#111;font-weight:900;cursor:pointer;font-family:Arial Black,sans-serif;font-size:13px">ЗАМОВИТИ →</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER CAFE MODAL -->
+<div class="overlay" id="registerCafeModal" onclick="closeOverlay(event,'registerCafeModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-head">
+      <h2>🏪 Зареєструвати заклад</h2>
+      <button class="close-btn" onclick="closeModal('registerCafeModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="padding:10px 12px;background:var(--orange-bg);border-radius:var(--radius-sm);font-size:12px;color:var(--orange);margin-bottom:1rem">
+        📋 Після заповнення заявка піде на модерацію. Ми перевіримо і опублікуємо протягом доби.
+      </div>
+
+      <div id="regCafeNotLogged" style="display:none;padding:10px 12px;background:var(--amber-bg);border-radius:var(--radius-sm);font-size:12px;color:var(--amber);margin-bottom:1rem">
+        ⚠️ Для реєстрації закладу потрібно <b onclick="closeModal('registerCafeModal');openModal('loginModal')" style="cursor:pointer;text-decoration:underline">увійти або зареєструватись</b>
+      </div>
+
+      <div class="fg"><label class="fl">Назва закладу *</label><input class="finput" id="regCafeName" placeholder="Кафе 'Зустріч'"></div>
+      <div class="fg">
+        <label class="fl">Категорія *</label>
+        <select class="finput" id="regCafeCat">
+          <option value="cafe">☕ Кафе</option>
+          <option value="restaurant">🍽️ Ресторан</option>
+          <option value="pizza">🍕 Піцерія</option>
+          <option value="fastfood">🍔 Фастфуд</option>
+          <option value="bar">🍺 Бар/Паб</option>
+          <option value="shawarma">🌯 Шаурма</option>
+          <option value="sushi">🍣 Суші</option>
+          <option value="bakery">🥐 Пекарня</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Адреса *</label><input class="finput" id="regCafeAddr" placeholder="вул. Шевченка, 12"></div>
+      <div class="fg"><label class="fl">Телефон *</label><input class="finput" id="regCafePhone" placeholder="+380 67 123 45 67" type="tel"></div>
+      <div class="row2">
+        <div class="fg"><label class="fl">Години роботи</label><input class="finput" id="regCafeHours" placeholder="9:00 — 22:00"></div>
+        <div class="fg"><label class="fl">Середній чек (грн)</label><input class="finput" id="regCafeCheck" type="number" placeholder="200"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Доставка</label>
+        <div class="toggle-row">
+          <button class="btn btn-outline" id="regDelivNoBtn" onclick="setRegDelivery(false)">❌ Немає</button>
+          <button class="btn btn-dark" id="regDelivYesBtn" onclick="setRegDelivery(true)">✅ Є доставка</button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Опис закладу</label><textarea class="finput" id="regCafeDesc" rows="3" placeholder="Розкажіть про свій заклад..."></textarea></div>
+
+      <div class="fg">
+        <label class="fl">📸 Фото входу в заклад * (обов'язково)</label>
+        <input type="file" id="regCafeEntranceInput" accept="image/*" style="display:none" onchange="handleRegCafePhoto(this,'entrance')">
+        <button class="btn btn-outline" onclick="document.getElementById('regCafeEntranceInput').click()" style="width:100%;margin-bottom:6px">
+          📷 Фото вхідної групи
+        </button>
+        <div id="regCafeEntrancePreview"></div>
+        <div style="font-size:11px;color:var(--text-hint);margin-top:4px">Фото фасаду або входу — для підтвердження реального закладу</div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">📸 Фото інтер'єру (необов'язково)</label>
+        <input type="file" id="regCafeInteriorInput" accept="image/*" style="display:none" onchange="handleRegCafePhoto(this,'interior')">
+        <button class="btn btn-outline" onclick="document.getElementById('regCafeInteriorInput').click()" style="width:100%">
+          📷 Фото всередині
+        </button>
+        <div id="regCafeInteriorPreview" style="margin-top:6px"></div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('registerCafeModal')">Скасувати</button>
+      <button class="btn btn-orange" onclick="submitRegisterCafe()">Надіслати заявку →</button>
     </div>
   </div>
 </div>
@@ -365,12 +440,16 @@ footer a{color:rgba(245,243,238,0.4);text-decoration:none}
       <button class="close-btn" onclick="closeModal('adminModal')" style="background:rgba(255,255,255,0.1);color:#F5F3EE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
     </div>
     <div style="display:flex;border-bottom:1px solid var(--border);overflow-x:auto">
+      <button id="adTabPendingBtn" onclick="adSwitchTab('pending')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">⏳ Заявки</button>
       <button id="adTabCafesBtn" onclick="adSwitchTab('cafes')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid var(--accent);color:var(--text);font-family:'Manrope',sans-serif;white-space:nowrap">🏪 Заклади</button>
       <button id="adTabReviewsBtn" onclick="adSwitchTab('reviews')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">💬 Відгуки</button>
       <button id="adTabMenuBtn" onclick="adSwitchTab('menu')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">📋 Меню JSON</button>
       <button id="adTabAddBtn" onclick="adSwitchTab('add')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">➕ Додати</button>
       <button id="adTabHelpBtn" onclick="adSwitchTab('help')" style="flex:1;padding:10px 4px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Manrope',sans-serif;white-space:nowrap">📖 Мануал</button>
     </div>
+
+    <!-- PENDING TAB -->
+    <div id="adTabPending" style="display:none;padding:1rem;max-height:60vh;overflow-y:auto"><div id="adPendingList"></div></div>
 
     <!-- CAFES TAB -->
     <div id="adTabCafes" style="padding:1rem;max-height:60vh;overflow-y:auto"><div id="adCafesList"></div></div>
@@ -881,20 +960,154 @@ function setDelivery(val){
   document.getElementById('delivYesBtn').className='btn '+(val?'btn-dark':'btn-outline');
 }
 
-// ═══ АДМІН ═══
+// ═══ РЕЄСТРАЦІЯ ЗАКЛАДУ ═══
+let regCafeEntrancePhoto='';
+let regCafeInteriorPhoto='';
+let regDelivery=true;
+
+function setRegDelivery(val){
+  regDelivery=val;
+  document.getElementById('regDelivNoBtn').className='btn '+(val?'btn-outline':'btn-dark');
+  document.getElementById('regDelivYesBtn').className='btn '+(val?'btn-dark':'btn-outline');
+}
+
+async function handleRegCafePhoto(input,type){
+  const file=input.files[0];
+  if(!file)return;
+  const compressed=await compressPhoto(file,900,0.78);
+  if(type==='entrance'){
+    regCafeEntrancePhoto=compressed;
+    document.getElementById('regCafeEntrancePreview').innerHTML=`<img src="${compressed}" style="width:100%;height:140px;object-fit:cover;border-radius:8px">`;
+  }else{
+    regCafeInteriorPhoto=compressed;
+    document.getElementById('regCafeInteriorPreview').innerHTML=`<img src="${compressed}" style="width:100%;height:120px;object-fit:cover;border-radius:8px">`;
+  }
+}
+
+async function submitRegisterCafe(){
+  if(!currentUser){
+    document.getElementById('regCafeNotLogged').style.display='block';
+    return;
+  }
+  const name=document.getElementById('regCafeName').value.trim();
+  const cat=document.getElementById('regCafeCat').value;
+  const addr=document.getElementById('regCafeAddr').value.trim();
+  const phone=document.getElementById('regCafePhone').value.trim();
+  const hours=document.getElementById('regCafeHours').value.trim();
+  const avgCheck=parseInt(document.getElementById('regCafeCheck').value)||0;
+  const desc=document.getElementById('regCafeDesc').value.trim();
+
+  if(!name){toast('Введіть назву закладу');return;}
+  if(!addr){toast('Введіть адресу');return;}
+  if(!phone){toast('Введіть телефон');return;}
+  if(!regCafeEntrancePhoto){toast('📸 Додайте фото вхідної групи — це обов\'язково!');return;}
+
+  try{
+    await db.collection('cafe_pending').add({
+      name,cat,addr,phone,hours,avgCheck,desc,
+      delivery:regDelivery,
+      entrancePhoto:regCafeEntrancePhoto,
+      interiorPhoto:regCafeInteriorPhoto||'',
+      photo:regCafeEntrancePhoto,
+      ownerUid:currentUser.uid,
+      ownerNick:currentUser.nick,
+      ownerPhone:currentUser.phone||'',
+      status:'pending',
+      createdAt:Date.now()
+    });
+    closeModal('registerCafeModal');
+    // reset
+    document.getElementById('regCafeName').value='';
+    document.getElementById('regCafeAddr').value='';
+    document.getElementById('regCafePhone').value='';
+    document.getElementById('regCafeHours').value='';
+    document.getElementById('regCafeCheck').value='';
+    document.getElementById('regCafeDesc').value='';
+    document.getElementById('regCafeEntrancePreview').innerHTML='';
+    document.getElementById('regCafeInteriorPreview').innerHTML='';
+    regCafeEntrancePhoto='';regCafeInteriorPhoto='';
+    toast('✅ Заявку надіслано! Перевіримо протягом доби.');
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+// ═══ АДМІН PENDING ═══
+async function adRenderPending(){
+  const el=document.getElementById('adPendingList');
+  el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-muted);font-size:13px">Завантаження...</div>';
+  try{
+    const snap=await db.collection('cafe_pending').where('status','==','pending').orderBy('createdAt','desc').get();
+    const items=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!items.length){
+      el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text-muted)">🎉 Нових заявок немає</div>';
+      return;
+    }
+    el.innerHTML=items.map(p=>`
+      <div style="border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden;background:var(--bg-card)">
+        <div style="display:flex;gap:8px">
+          <img src="${p.entrancePhoto}" style="width:80px;height:80px;object-fit:cover;flex-shrink:0">
+          ${p.interiorPhoto?`<img src="${p.interiorPhoto}" style="width:80px;height:80px;object-fit:cover;flex-shrink:0">`:''}
+        </div>
+        <div style="padding:10px 12px">
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">${CAT_EMOJI[p.cat]||'🍽️'} ${p.name}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">📍 ${p.addr}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">📞 ${p.phone}</div>
+          ${p.hours?`<div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">🕐 ${p.hours}</div>`:''}
+          ${p.avgCheck?`<div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">💳 ~${p.avgCheck} грн</div>`:''}
+          <div style="font-size:11px;color:var(--text-hint);margin-bottom:8px">Від: @${p.ownerNick||'?'} · ${timeAgo(p.createdAt)}</div>
+          ${p.desc?`<div style="font-size:12px;color:var(--text-muted);background:var(--bg);padding:6px 8px;border-radius:6px;margin-bottom:8px">${p.desc}</div>`:''}
+          <div style="display:flex;gap:8px">
+            <button onclick="approveCafe('${p.id}')" style="flex:1;padding:8px;border-radius:var(--radius-sm);border:none;background:var(--green-bg);color:var(--green);font-size:12px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif">✅ Підтвердити</button>
+            <button onclick="rejectCafe('${p.id}')" style="flex:1;padding:8px;border-radius:var(--radius-sm);border:1px solid var(--red);background:var(--red-bg);color:var(--red);font-size:12px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif">❌ Відхилити</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){el.innerHTML='<div style="color:var(--red);padding:1rem">Помилка: '+e.message+'</div>';}
+}
+
+async function approveCafe(pendingId){
+  try{
+    const snap=await db.collection('cafe_pending').doc(pendingId).get();
+    const p=snap.data();
+    await db.collection('cafe_listings').add({
+      name:p.name,cat:p.cat,addr:p.addr,phone:p.phone,
+      hours:p.hours||'',avgCheck:p.avgCheck||0,desc:p.desc||'',
+      delivery:p.delivery||false,
+      photo:p.entrancePhoto||'',
+      entrancePhoto:p.entrancePhoto||'',
+      interiorPhoto:p.interiorPhoto||'',
+      ownerUid:p.ownerUid||'',
+      rating:0,reviewCount:0,
+      createdAt:Date.now()
+    });
+    await db.collection('cafe_pending').doc(pendingId).update({status:'approved'});
+    await loadCafes();
+    adRenderPending();
+    toast('✅ Заклад підтверджено і опубліковано!');
+  }catch(e){toast('Помилка: '+e.message);}
+}
+
+async function rejectCafe(pendingId){
+  if(!confirm('Відхилити заявку?'))return;
+  try{
+    await db.collection('cafe_pending').doc(pendingId).update({status:'rejected'});
+    adRenderPending();
+    toast('Заявку відхилено');
+  }catch(e){toast('Помилка: '+e.message);}
+}
 function openAdminModal(){
   const p=prompt('Пароль:');
-  if(p===ADMIN_PASS_CAFE){openModal('adminModal');adSwitchTab('cafes');}
+  if(p===ADMIN_PASS_CAFE){openModal('adminModal');adSwitchTab('pending');}
   else if(p!==null)toast('Невірний пароль');
 }
 
 function adSwitchTab(tab){
-  ['cafes','reviews','menu','add','help'].forEach(t=>{
+  ['pending','cafes','reviews','menu','add','help'].forEach(t=>{
     const el=document.getElementById('adTab'+t.charAt(0).toUpperCase()+t.slice(1));
     if(el)el.style.display=t===tab?'block':'none';
     const btn=document.getElementById('adTab'+t.charAt(0).toUpperCase()+t.slice(1)+'Btn');
     if(btn){btn.style.borderBottomColor=t===tab?'var(--accent)':'transparent';btn.style.color=t===tab?'var(--text)':'var(--text-muted)';}
   });
+  if(tab==='pending')adRenderPending();
   if(tab==='cafes')adRenderCafes();
   if(tab==='reviews')adRenderReviews();
   if(tab==='menu')populateCafeSelects();
